@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VPBS Vacation Planning Service</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #384c5a; /* Change background to #384c5a */
+            color: #fff;
+        }
+        header {
+            background-color: #cd2c3d;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+        #turbo-trip {
+            color: white; /* Set Turbo Trip to white */
+            font-size: 36px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 10px; /* Adjust space below Turbo Trip */
+        }
+        h1 {
+            color: white; /* Change only VPBS Vacation Planning Service color to white */
+        }
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #a0b3cb;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+        h2 {
+            color: white; /* Change Plan Your Trip heading color to white */
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #d70000;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            color: black; /* Set the text color inside the result to black */
+        }
+        .child-age-input {
+            margin-top: -10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="turbo-trip">
+        Turbo Trip
+    </div>
+
+    <header>
+        <h1>VPBS Vacation Planning Service</h1>
+    </header>
+
+    <div class="container">
+        <h2>Plan Your Trip</h2>
+        <form id="trip-form">
+            <label for="departure-date">Departure Date:</label>
+            <input type="date" id="departure-date" name="departure-date" required>
+
+            <label for="return-date">Return Date:</label>
+            <input type="date" id="return-date" name="return-date" required>
+
+            <label for="budget">Budget ($):</label>
+            <input type="number" id="budget" name="budget" min="0" required>
+
+            <label for="flight-class">Flight Class:</label>
+            <select id="flight-class" name="flight-class" required>
+                <option value="first">First Class</option>
+                <option value="business">Business Class</option>
+                <option value="economy">Economy Class</option>
+                <option value="premium-economy">Premium Economy</option>
+            </select>
+
+            <label for="destination">Destination:</label>
+            <input type="text" id="destination" name="destination" required>
+
+            <label for="transport-mode">Mode of Transport:</label>
+            <select id="transport-mode" name="transport-mode" required>
+                <option value="rent-a-car">Rent a Car</option>
+                <option value="private">Private Transport</option>
+                <option value="public">Public Transport</option>
+                <option value="on-foot">On Foot</option>
+            </select>
+
+            <label for="people-over-17">Number of People Above 17:</label>
+            <select id="people-over-17" name="people-over-17" required>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+                <option value="13">13</option>
+                <option value="14">14</option>
+                <option value="15">15</option>
+            </select>
+
+            <label for="people-under-17">Number of People Under 17:</label>
+            <select id="people-under-17" name="people-under-17" required onchange="showChildAgeInputs()">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+                <option value="13">13</option>
+                <option value="14">14</option>
+                <option value="15">15</option>
+            </select>
+
+            <div id="child-age-container"></div>
+
+            <label for="trip-type">Trip Type (e.g., Business Trip, Family Vacation, Sightseeing):</label>
+            <input type="text" id="trip-type" name="trip-type" required>
+
+            <label for="trip-description">Trip Description:</label>
+            <textarea id="trip-description" name="trip-description" rows="5" placeholder="Describe what you would like to do on this trip..." required></textarea>
+
+            <button type="button" onclick="generateItinerary()">Submit</button>
+        </form>
+
+        <div id="result" class="result" style="display: none;"></div>
+    </div>
+
+    <script>
+        function showChildAgeInputs() {
+            const childrenCount = parseInt(document.getElementById('people-under-17').value, 10);
+            const container = document.getElementById('child-age-container');
+            container.innerHTML = ''; // Clear previous inputs
+
+            for (let i = 0; i < childrenCount; i++) {
+                const label = document.createElement('label');
+                label.textContent = `Age of Child ${i + 1}:`;
+                label.classList.add('child-age-input');
+
+                const input = document.createElement('input');
+                input.type = 'number';
+                input.name = `child-age-${i + 1}`;
+                input.min = '0';
+                input.max = '17';
+                input.required = true;
+
+                container.appendChild(label);
+                container.appendChild(input);
+            }
+        }
+
+        function generateItinerary() {
+            const itinerary = `
+                <h3>Your Generated Itinerary:</h3>
+                <h4>Itinerary Overview</h4>
+                <ul>
+                    <li><strong>New York:</strong> Dec 17-22, 2024</li>
+                    <li><strong>Chicago:</strong> Dec 22-27, 2024 (arriving by train)</li>
+                    <li><strong>Los Angeles:</strong> Dec 27 - Jan 1, 2025 (arriving by flight from Chicago)</li>
+                    <li><strong>New York (Return Stay):</strong> Jan 1-2, 2025</li>
+                    <li><strong>Return Flight to Bahrain:</strong> Jan 2, 2025</li>
+                </ul>
+
+                <h4>Budget</h4>
+                <p><strong>Total Budget:</strong> 15,000 BHD</p>
+                <p>This budget will cover flights, hotels, private transport, and activities across all destinations.</p>
+
+                <h4>Transportation</h4>
+                <p><strong>International Flights:</strong> Emirates, Etihad, or Turkish Airlines – These airlines offer flights from Bahrain to New York with one layover, typically in Dubai, Abu Dhabi, or Istanbul, ensuring minimal stops.</p>
+                <p><strong>Domestic Travel:</strong>
+                    <ul>
+                        <li>New York to Chicago – Amtrak Acela Express or Amtrak Lake Shore Limited.</li>
+                        <li>Chicago to Los Angeles – Non-stop flights on American Airlines or United.</li>
+                        <li>Los Angeles to New York – Non-stop flights on JetBlue, Delta, or American Airlines.</li>
+                    </ul>
+                </p>
+
+                <h4>Hotels (4-5 Star Options)</h4>
+                <p><strong>New York (Dec 17-22, Jan 1-2):</strong> Parkside Inn, Midtown Plaza Suites, Empire Luxe Hotel.</p>
+                <p><strong>Chicago (Dec 22-27):</strong> The Chicago Sheraton, The Windy City Suites, Magnificent Mile Premier.</p>
+                <p><strong>Los Angeles (Dec 27 - Jan 1):</strong> LA Grand Palace, Beverly Hills Suites, Oceanfront Resort.</p>
+
+                <h4>Activities</h4>
+                <p>Explore famous landmarks such as Times Square, Central Park, Millennium Park, Chicago's Magnificent Mile, and more. Consider a luxury city tour package or private guide for a more personalized experience.</p>
+            `;
+
+            document.getElementById('result').innerHTML = itinerary;
+            document.getElementById('result').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
